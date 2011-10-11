@@ -62,6 +62,8 @@ function signal(value)
 	end
 end
 
+read_archive("archives/training_samples.csv")
+
 repeat
 	print("Entrando na época: "..age)
 	error_flag = false
