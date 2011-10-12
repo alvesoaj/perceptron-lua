@@ -11,7 +11,7 @@ B_VALUE = 1
 -- Array para os pesos sinápticos
 synaptic_weights = {}
 -- Array para os valores de especificação
-values_to_classify = {}
+inputs_for_classification = {}
 
 function load_synaptic_weights(file)
   local fp = assert(io.open(file))
@@ -27,7 +27,7 @@ end
 function input_parser(string)
   for value in string:gmatch("[^,]*") do
     if value ~= '' then	
-    	values_to_classify[#values_to_classify+1] = (value * 1)
+    	inputs_for_classification[#inputs_for_classification+1] = (value * 1)
     end
   end
 end
@@ -51,7 +51,7 @@ input_parser(inputs_to_classify)
 load_synaptic_weights("archives/synaptic_weights_values.csv")
 
 activation_potential = 0
-for j, input in ipairs(values_to_classify) do
+for j, input in ipairs(inputs_for_classification) do
 	activation_potential = activation_potential + (synaptic_weights[j] * input)
 end
 
