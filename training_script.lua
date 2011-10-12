@@ -1,11 +1,11 @@
-------------------------------------------
---	Universidade Estadual do Piauí - UESPI
---
--- Bac. Em Ciências da Computação, 2011.2
---
---	AJ Alves - aj.zerokol@gmail.com - 2007.1 
---
-------------------------------------------
+--[[++++++++++++++++++++++++++++++++++++++++++++
+++	Universidade Estadual do Piauí - UESPI
+++
+++	Bac. Em Ciências da Computação, 2011.2
+++
+++	AJ Alves - aj.zerokol@gmail.com - 2007.1 
+++
+++++++++++++++++++++++++++++++++++++++++++++++++]]
 -- Array para os valores de entrada
 samples_values = {}
 -- Array para saidas desejadas
