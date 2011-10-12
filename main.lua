@@ -25,30 +25,30 @@ function read_archive(file)
   for line in fp:lines() do
     local row = {}
     for value in line:gmatch("[^,]*") do
-    	if #row == 4 then
-    		desired_results[#desired_results+1] = value
-    	else
-      	row[#row+1] = value
-      end
+	    if value ~= '' then	
+	    	if #row == 4 then
+	    		desired_results[#desired_results+1] = value
+	    	else
+	      	row[#row+1] = value
+	      end
+	    end
     end
     samples_values[#samples_values+1] = row
   end
 end
 
-function write_archive(file,tab)
-  local fp = assert(io.open(file,"w"))
-  for i,row in ipairs(tab) do
-    for i,value in ipairs(row) do
-      fp:write(tostring(value)..",")
-    end
-    fp:write "\\n"
+function write_archive(file)
+  local fp = assert(io.open(file, "w"))
+  for index, value in ipairs(synaptic_weights) do
+  	fp:write(tostring(value)..",")
   end
+  fp:write("/n")
 end
 
 -- Função para incializar aleatoriamente os pesos sinápticos
 function start_synaptic_weights()
-	for x = #synaptic_weights, x < 4, x++ do
-		synaptic_weights[x] = (math.random(0,1) / 100)
+	for x = #synaptic_weights, 4 do
+		synaptic_weights[x] = (math.random(0,100) / 100)
 	end
 end
 
@@ -63,20 +63,26 @@ function signal(value)
 end
 
 read_archive("archives/training_samples.csv")
+start_synaptic_weights()
 
 repeat
 	print("Entrando na época: "..age)
 	error_flag = false
-	for i, samples in pairs(samples_values) do
+	for i, samples in ipairs(samples_values) do
 		activation_potential = 0
-		for j, sample in pairs(samples) do
-			activation_potential += (synaptic_weights[j] * sample)
+		for j, sample in ipairs(samples) do
+			activation_potential = activation_potential + (synaptic_weights[j] * sample)
 		end
 		y = signal(activation_potential)
-		if y ~= desired_results[i] then
-			synaptic_weights[j] = synaptic_weights[j] + learning_rate * (desired_results[i] - y) * sample
-			error_flag = true
+		for j = 1, #synaptic_weights do
+			print(y)
+			if y ~= desired_results[i] then
+				synaptic_weights[j] = synaptic_weights[j] + learning_rate * (desired_results[i] - y) * samples[j]
+				error_flag = true
+			end
 		end
 	end
-	age++
-until error_flag == false
+	age = age + 1
+until error_flag == false or age > 100
+
+write_archive("archives/synaptic_weights_values.csv")
