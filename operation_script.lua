@@ -24,7 +24,21 @@ function load_synaptic_weights(file)
   end
 end
 
+function load_operation_inputs(file)
+  local fp = assert(io.open(file))
+  for line in fp:lines() do
+    local row = {}
+    for value in line:gmatch("[^,]*") do
+	    if value ~= '' then	
+	      row[#row+1] = value
+	    end
+    end
+    inputs_for_classification[#inputs_for_classification+1] = row
+  end
+end
+
 function input_parser(string)
+	inputs_for_classification[1] = -1
   for value in string:gmatch("[^,]*") do
     if value ~= '' then	
     	inputs_for_classification[#inputs_for_classification+1] = tonumber(value)
@@ -42,25 +56,69 @@ function signal(value)
 	end
 end
 
-print("Insira os três valores a serem classificados")
-io.write("Separados por virgula: ")
-inputs_to_classify = io.read()
-
-input_parser(inputs_to_classify)
-
+--Carregando os pesos já treinados
 load_synaptic_weights("archives/synaptic_weights_values.csv")
 
-activation_potential = 0
-for j, input in ipairs(inputs_for_classification) do
-	activation_potential = activation_potential + (synaptic_weights[j] * input)
-end
+repeat
+	print("Selecione o mode de operação:")
+	print("\t\t1 - Para inserir entradas manualmente")
+	print("\t\t2 - Para ler do arquivo archives/operation_inputs.cvs")
+	print("\t\t3 - Sair")
+	io.write("Opção: ")
+	option_mode = io.read()
 
-y = signal(activation_potential)
+	if option_mode == '1' then
+		print("Insira os três valores a serem classificados")
+		io.write("Separados por virgula: ")
+		inputs_to_classify = io.read()
 
-if y == A_VALUE then
-	print("A amostra pertence ao grupo de óleo P1")
-elseif y == B_VALUE then
-	print("A amostra pertence ao grupo de óleo P2")
-else
-	print("ERRO")
-end
+		input_parser(inputs_to_classify)
+
+		activation_potential = 0
+		for j, input in ipairs(inputs_for_classification) do
+			activation_potential = activation_potential + (synaptic_weights[j] * input)
+		end
+
+		y = signal(activation_potential)
+
+		for x = 1, #synaptic_weights do
+			print("\tAmostra "..x..": "..inputs_for_classification[x])
+			print("\tPeso Sináptico "..x..": "..synaptic_weights[x])
+		end
+
+		if y == A_VALUE then
+			print("\tA amostra pertence ao grupo de óleo P1\n\n")
+		elseif y == B_VALUE then
+			print("\tA amostra pertence ao grupo de óleo P2\n\n")
+		else
+			print("ERRO")
+		end
+	elseif option_mode == '2' then
+		load_operation_inputs("archives/operation_inputs.cvs")
+		for i, inputs in ipairs(inputs_for_classification) do
+			activation_potential = 0
+			for j, input in ipairs(inputs) do
+				activation_potential = activation_potential + (synaptic_weights[j] * input)
+			end
+
+			y = signal(activation_potential)
+
+			for x = 1, #synaptic_weights do
+				print("\tAmostra "..x..": "..inputs_for_classification[i][x])
+				print("\tPeso Sináptico "..x..": "..synaptic_weights[x])
+			end
+
+			if y == A_VALUE then
+				print("\tA amostra pertence ao grupo de óleo P1\n\n")
+			elseif y == B_VALUE then
+				print("\tA amostra pertence ao grupo de óleo P2\n\n")
+			else
+				print("ERRO")
+			end
+		end
+	elseif option_mode == '3' then
+		print("até logo!")
+	else
+		print("Opção inválida!")
+	end
+until option_mode == '3'
