@@ -27,7 +27,7 @@ end
 function input_parser(string)
   for value in string:gmatch("[^,]*") do
     if value ~= '' then	
-    	inputs_for_classification[#inputs_for_classification+1] = (value * 1)
+    	inputs_for_classification[#inputs_for_classification+1] = tonumber(value)
     end
   end
 end

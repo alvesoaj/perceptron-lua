@@ -27,7 +27,7 @@ function read_archive(file)
     for value in line:gmatch("[^,]*") do
 	    if value ~= '' then	
 	    	if #row == 4 then
-	    		desired_results[#desired_results+1] = (value * 1)
+	    		desired_results[#desired_results+1] = tonumber(value)
 	    	else
 	      	row[#row+1] = value
 	      end
