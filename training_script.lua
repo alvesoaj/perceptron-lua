@@ -12,6 +12,8 @@ samples_values = {}
 desired_results = {}
 -- Array para os pesos sinápticos
 synaptic_weights = {}
+-- Array para os pesos sinápticos aleatórios
+init_synaptic_weights = {}
 -- Especificar taxa de aprendizagem
 learning_rate = 0.01
 -- Inicando as épocas
@@ -50,7 +52,9 @@ end
 -- Função para incializar aleatoriamente os pesos sinápticos
 function start_synaptic_weights()
 	for x = #synaptic_weights, 4 do
-		synaptic_weights[x] = (math.random(0,100) / 100)
+		synaptic_weights[x] = (math.random(0, 100) / 100)
+		-- Copiando os valores iniciais dos pesos, para efeito de comparação
+		init_synaptic_weights[x] = synaptic_weights[x]
 	end
 end
 
@@ -87,3 +91,9 @@ repeat
 until error_flag == false
 
 write_archive("archives/synaptic_weights_values.csv")
+
+print("\n\nO treinamento acabou na época: "..(age - 1))
+for x = 1, #synaptic_weights do
+	print("\tPeso Sináptico inicial"..(x - 1)..": "..init_synaptic_weights[x])
+	print("\tPeso Sináptico "..(x - 1)..": "..synaptic_weights[x])
+end
